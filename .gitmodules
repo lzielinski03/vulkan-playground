@@ -1,0 +1,3 @@
+[submodule "vulkan-playground/vendor/spdlog"]
+	path = vulkan-playground/vendor/spdlog
+	url = https://github.com/gabime/spdlog

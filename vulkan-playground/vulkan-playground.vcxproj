@@ -57,6 +57,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>VPL_PLATFORM_WINDOWS;VPL_BUILD_DLL;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(SolutionDir)vulkan-playground\vendor\spdlog\include;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -71,6 +72,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>VPL_PLATFORM_WINDOWS;VPL_BUILD_DLL;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(SolutionDir)vulkan-playground\vendor\spdlog\include;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -80,9 +82,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\VulkanPlayground\Log.cpp" />
     <ClCompile Include="src\VulkanPlayground\Application.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\VulkanPlayground\Log.hpp" />
     <ClInclude Include="src\VulkanPlayground.hpp" />
     <ClInclude Include="src\VulkanPlayground\Application.hpp" />
     <ClInclude Include="src\VulkanPlayground\Core.hpp" />
