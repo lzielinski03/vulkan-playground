@@ -42,7 +42,7 @@ project "vulkan-playground"
 
 		postbuildcommands
 		{
-			("{COPY} %{cfg.buildtarget.relpath} ../bin/" .. outputdir .. "/sandobx")
+			("{COPY} %{cfg.buildtarget.relpath} ../bin/" .. outputdir .. "/sandbox")
 		}
 
 	filter "configurations:Debug"
@@ -57,8 +57,8 @@ project "vulkan-playground"
 		defines "VPL_DIST"
 		optimize "On"
 
-project "sandobx"
-	location "sandobx"
+project "sandbox"
+	location "sandbox"
 	kind "ConsoleApp"
 	language "C++"
 

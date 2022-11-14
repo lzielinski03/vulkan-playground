@@ -15,10 +15,10 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{B48F6C82-206F-EB1D-2987-76F495E5517F}</ProjectGuid>
+    <ProjectGuid>{145A6C82-8039-EB1D-8951-76F4F5AF517F}</ProjectGuid>
     <IgnoreWarnCompileDuplicatedFilename>true</IgnoreWarnCompileDuplicatedFilename>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>sandobx</RootNamespace>
+    <RootNamespace>sandbox</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -55,23 +55,23 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>..\bin\Debug-windows-x86_64\sandobx\</OutDir>
-    <IntDir>..\bin-int\Debug-windows-x86_64\sandobx\</IntDir>
-    <TargetName>sandobx</TargetName>
+    <OutDir>..\bin\Debug-windows-x86_64\sandbox\</OutDir>
+    <IntDir>..\bin-int\Debug-windows-x86_64\sandbox\</IntDir>
+    <TargetName>sandbox</TargetName>
     <TargetExt>.exe</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>..\bin\Release-windows-x86_64\sandobx\</OutDir>
-    <IntDir>..\bin-int\Release-windows-x86_64\sandobx\</IntDir>
-    <TargetName>sandobx</TargetName>
+    <OutDir>..\bin\Release-windows-x86_64\sandbox\</OutDir>
+    <IntDir>..\bin-int\Release-windows-x86_64\sandbox\</IntDir>
+    <TargetName>sandbox</TargetName>
     <TargetExt>.exe</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Dist|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>..\bin\Dist-windows-x86_64\sandobx\</OutDir>
-    <IntDir>..\bin-int\Dist-windows-x86_64\sandobx\</IntDir>
-    <TargetName>sandobx</TargetName>
+    <OutDir>..\bin\Dist-windows-x86_64\sandbox\</OutDir>
+    <IntDir>..\bin-int\Dist-windows-x86_64\sandbox\</IntDir>
+    <TargetName>sandbox</TargetName>
     <TargetExt>.exe</TargetExt>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
