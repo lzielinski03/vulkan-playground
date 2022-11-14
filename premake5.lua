@@ -18,6 +18,9 @@ project "vulkan-playground"
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}") 
 	objdir ("bin-int/" .. outputdir .. "/%{prj.name}") 
 
+	pchheader "pch.hpp"
+	pchsource "vulkan-playground/src/pch.cpp"
+
 	files
 	{
 		"%{prj.name}/src/**.hpp",

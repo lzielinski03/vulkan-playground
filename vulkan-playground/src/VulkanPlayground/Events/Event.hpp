@@ -1,9 +1,7 @@
 #pragma once
 
+#include "pch.hpp"
 #include "VulkanPlayground/Core.hpp"
-
-#include <string>
-#include <functional>
 
 namespace VulkanPG {
 	// Events in Hazel are currently blocking, meaning when an event occurs it

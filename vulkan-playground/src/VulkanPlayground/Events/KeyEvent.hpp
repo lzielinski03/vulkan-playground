@@ -2,8 +2,6 @@
 
 #include "Event.hpp"
 
-#include <sstream>
-
 namespace VulkanPG {
 
 	class VPL_API KeyEvent : public Event
