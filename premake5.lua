@@ -26,6 +26,7 @@ project "vulkan-playground"
 
 	includedirs
 	{
+		"%{prj.name}/src",
 		"vulkan-playground/vendor/spdlog/include",
 	}
 

@@ -4,6 +4,9 @@
     <Filter Include="VulkanPlayground">
       <UniqueIdentifier>{1B76BFC4-076F-DE16-30A1-C39B1CF9BD22}</UniqueIdentifier>
     </Filter>
+    <Filter Include="VulkanPlayground\Events">
+      <UniqueIdentifier>{9FD56526-0B0D-AEBD-1417-12E180CDD4B6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\VulkanPlayground.hpp" />
@@ -15,6 +18,18 @@
     </ClInclude>
     <ClInclude Include="src\VulkanPlayground\EntryPoint.hpp">
       <Filter>VulkanPlayground</Filter>
+    </ClInclude>
+    <ClInclude Include="src\VulkanPlayground\Events\ApplicationEvent.hpp">
+      <Filter>VulkanPlayground\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="src\VulkanPlayground\Events\Event.hpp">
+      <Filter>VulkanPlayground\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="src\VulkanPlayground\Events\KeyEvent.hpp">
+      <Filter>VulkanPlayground\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="src\VulkanPlayground\Events\MouseEvent.hpp">
+      <Filter>VulkanPlayground\Events</Filter>
     </ClInclude>
     <ClInclude Include="src\VulkanPlayground\Log.hpp">
       <Filter>VulkanPlayground</Filter>
