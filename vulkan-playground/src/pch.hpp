@@ -7,6 +7,8 @@
 #include <string>
 #include <sstream>
 
+#include "VulkanPlayground/Log.hpp"
+
 #ifdef VPL_PLATFORM_WINDOWS
 	#include <Windows.h>
 #endif

@@ -1,3 +1,6 @@
 [submodule "vulkan-playground/vendor/spdlog"]
 	path = vulkan-playground/vendor/spdlog
 	url = https://github.com/gabime/spdlog
+[submodule "vulkan-playground/vendor/GLFW"]
+	path = vulkan-playground/vendor/GLFW
+	url = https://github.com/TheCherno/GLFW

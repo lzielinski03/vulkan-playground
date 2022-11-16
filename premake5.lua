@@ -10,6 +10,12 @@ workspace "vulkan-playground"
 
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
+-- Include directories relative to root folder (solution directory)
+IncludeDir = {}
+IncludeDir["GLFW"] = "vulkan-playground/vendor/GLFW/include"
+
+include "vulkan-playground/vendor/GLFW"
+
 project "vulkan-playground"
 	location "vulkan-playground"
 	kind "SharedLib"
@@ -31,6 +37,13 @@ project "vulkan-playground"
 	{
 		"%{prj.name}/src",
 		"vulkan-playground/vendor/spdlog/include",
+		"%{IncludeDir.GLFW}"
+	}
+
+	links 
+	{ 
+		"GLFW",
+		"opengl32.lib"
 	}
 
 	filter "system:windows"

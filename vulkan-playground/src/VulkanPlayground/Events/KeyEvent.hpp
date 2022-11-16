@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Event.hpp"
+#include "VulkanPlayground/Events/Event.hpp"
 
 namespace VulkanPG {
 

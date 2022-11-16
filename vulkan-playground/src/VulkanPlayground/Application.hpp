@@ -1,7 +1,8 @@
 #pragma once
 
-#include "Core.hpp"
-#include "Events/Event.hpp"
+#include "VulkanPlayground/Core.hpp"
+#include "VulkanPlayground/Events/Event.hpp"
+#include "Window.hpp"
 
 namespace VulkanPG {
 
@@ -11,7 +12,13 @@ namespace VulkanPG {
 		virtual ~Application();
 
 		void Run();
+
+	private:
+		std::unique_ptr<Window> m_Window;
+		bool m_Running = true;
 	};
+
+
 
 	// to be deffined in a client
 	Application* CreateApplication();
