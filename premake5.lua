@@ -16,6 +16,9 @@ IncludeDir["GLFW"] = "vulkan-playground/vendor/GLFW/include"
 
 include "vulkan-playground/vendor/GLFW"
 
+project "GLFW"
+	staticruntime "On"
+
 project "vulkan-playground"
 	location "vulkan-playground"
 	kind "SharedLib"
@@ -37,13 +40,15 @@ project "vulkan-playground"
 	{
 		"%{prj.name}/src",
 		"vulkan-playground/vendor/spdlog/include",
-		"%{IncludeDir.GLFW}"
+		"%{IncludeDir.GLFW}",
+		"C:/VulkanSDK/1.3.224.1/Include"
 	}
 
 	links 
 	{ 
 		"GLFW",
-		"opengl32.lib"
+		"C:/VulkanSDK/1.3.224.1/Lib/vulkan-1.lib"
+		--"opengl32.lib"
 	}
 
 	filter "system:windows"

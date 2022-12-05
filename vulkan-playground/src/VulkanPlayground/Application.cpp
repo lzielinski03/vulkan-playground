@@ -1,8 +1,9 @@
 #include "pch.hpp"
 #include "VulkanPlayground/Application.hpp"
 
-#include "VulkanPlayground/Log.hpp" 
-#include "GLFW/glfw3.h"
+#include "VulkanPlayground/Log.hpp"
+#define GLFW_INCLUDE_VULKAN
+#include <GLFW/glfw3.h>
 
 namespace VulkanPG {
 
@@ -12,6 +13,12 @@ namespace VulkanPG {
 	{
 		m_Window = std::unique_ptr<Window>(Window::Create());
 		m_Window->SetEventCallback(BIND_EVENT_FN(Application::OnEvent));
+		
+		if (glfwVulkanSupported())
+		{
+			VPL_CORE_TRACE("Vulkan is available, at least for compute");
+
+		}
 	}
 
 	Application::~Application()
@@ -41,8 +48,8 @@ namespace VulkanPG {
 
 		while (m_Running)
 		{
-			glClearColor(1, 0, 1, 1);
-			glClear(GL_COLOR_BUFFER_BIT);
+			//glClearColor(1, 0, 1, 1);
+			//glClear(GL_COLOR_BUFFER_BIT);
 			m_Window->OnUpdate();
 		}
 	}
