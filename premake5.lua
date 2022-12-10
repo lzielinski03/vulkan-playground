@@ -13,6 +13,7 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 -- Include directories relative to root folder (solution directory)
 IncludeDir = {}
 IncludeDir["GLFW"] = "vulkan-playground/vendor/GLFW/include"
+IncludeDir["glm"] = "vulkan-playground/vendor/glm"
 
 include "vulkan-playground/vendor/GLFW"
 
@@ -41,6 +42,7 @@ project "vulkan-playground"
 		"%{prj.name}/src",
 		"vulkan-playground/vendor/spdlog/include",
 		"%{IncludeDir.GLFW}",
+		"%{IncludeDir.glm}",
 		"C:/VulkanSDK/1.3.224.1/Include"
 	}
 
@@ -96,7 +98,8 @@ project "sandbox"
 	includedirs
 	{
 		"vulkan-playground/vendor/spdlog/include",
-		"vulkan-playground/src"
+		"vulkan-playground/src",
+		"C:/VulkanSDK/1.3.224.1/Include"
 	}
 
 	links {

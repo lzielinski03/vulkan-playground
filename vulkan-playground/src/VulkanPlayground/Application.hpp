@@ -6,6 +6,8 @@
 
 #include "Window.hpp"
 
+#include <vulkan/vulkan_core.h>
+
 namespace VulkanPG {
 
 	class VPL_API Application {
@@ -19,6 +21,9 @@ namespace VulkanPG {
 		bool OnWindowClose(WindowCloseEvent& e);
 		std::unique_ptr<Window> m_Window;
 		bool m_Running = true;
+
+		VkInstance instance;
+
 	};
 
 
