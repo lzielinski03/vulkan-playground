@@ -156,6 +156,7 @@
     <ClInclude Include="src\VulkanPlayground.hpp" />
     <ClInclude Include="src\VulkanPlayground\Application.hpp" />
     <ClInclude Include="src\VulkanPlayground\Core.hpp" />
+    <ClInclude Include="src\VulkanPlayground\Core\Instance.hpp" />
     <ClInclude Include="src\VulkanPlayground\EntryPoint.hpp" />
     <ClInclude Include="src\VulkanPlayground\Events\ApplicationEvent.hpp" />
     <ClInclude Include="src\VulkanPlayground\Events\Event.hpp" />
@@ -168,6 +169,7 @@
   <ItemGroup>
     <ClCompile Include="src\Platform\Windows\WindowsWindow.cpp" />
     <ClCompile Include="src\VulkanPlayground\Application.cpp" />
+    <ClCompile Include="src\VulkanPlayground\Core\Instance.cpp" />
     <ClCompile Include="src\VulkanPlayground\Log.cpp" />
     <ClCompile Include="src\pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>

@@ -47,6 +47,7 @@
       <Filter>VulkanPlayground</Filter>
     </ClInclude>
     <ClInclude Include="src\pch.hpp" />
+    <ClInclude Include="src\VulkanPlayground\Core\Instance.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\Windows\WindowsWindow.cpp">
@@ -59,5 +60,6 @@
       <Filter>VulkanPlayground</Filter>
     </ClCompile>
     <ClCompile Include="src\pch.cpp" />
+    <ClCompile Include="src\VulkanPlayground\Core\Instance.cpp" />
   </ItemGroup>
 </Project>

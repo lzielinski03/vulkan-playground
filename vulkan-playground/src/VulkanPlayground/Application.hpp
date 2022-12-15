@@ -5,8 +5,7 @@
 #include "VulkanPlayground/Events/ApplicationEvent.hpp"
 
 #include "Window.hpp"
-
-#include <vulkan/vulkan_core.h>
+#include "Core/Instance.hpp"
 
 namespace VulkanPG {
 
@@ -22,13 +21,9 @@ namespace VulkanPG {
 		std::unique_ptr<Window> m_Window;
 		bool m_Running = true;
 
-		VkInstance instance;
-
+		Instance instance;
 	};
-
-
 
 	// to be deffined in a client
 	Application* CreateApplication();
-
 }
