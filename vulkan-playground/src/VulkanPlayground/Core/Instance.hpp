@@ -2,8 +2,17 @@
 #include "VulkanPlayground/Core.hpp"
 #include <vulkan/vulkan_core.h>
 #include <vector>
+#include <optional>
 
 namespace VulkanPG {
+
+	struct QueueFamilyIndices {
+		std::optional<uint32_t> graphicsFamily;
+
+		bool isComplete() {
+			return graphicsFamily.has_value();
+		}
+	};
 
 	class VPL_API Instance {
 	public:
@@ -15,10 +24,15 @@ namespace VulkanPG {
 		VkInstance instance;
 		VkDebugUtilsMessengerEXT debugMessenger;
 
-		std::vector<const char*> getRequiredExtensions();
-		bool checkValidationLayerSupport();
-		void populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo);
+		void createInstance();
 		void setupDebugMessenger();
+		void populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo);
+		bool checkValidationLayerSupport();
+		std::vector<const char*> getRequiredExtensions();
 
+		void pickPhysicalDevice();
+		bool Instance::isDeviceSuitable(VkPhysicalDevice device);
+
+		QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
 	};
 }

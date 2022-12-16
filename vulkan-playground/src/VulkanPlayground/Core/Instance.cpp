@@ -9,6 +9,8 @@
 #include <glm/vec4.hpp>
 #include <glm/mat4x4.hpp>
 
+
+
 namespace VulkanPG {
 
 #ifdef NDEBUG
@@ -76,6 +78,13 @@ namespace VulkanPG {
 
 	void Instance::initVulkan()
 	{
+		createInstance();
+		setupDebugMessenger();
+		pickPhysicalDevice();
+	}
+
+	void Instance::createInstance()
+	{
 		VPL_CORE_TRACE("Instance initVulkan");
 
 		if (enableValidationLayers && !checkValidationLayerSupport())
@@ -119,16 +128,6 @@ namespace VulkanPG {
 			VPL_CORE_ERROR("failed to create instance!");
 			throw std::runtime_error("failed to create instance!");
 		}
-		setupDebugMessenger();
-	}
-
-	void Instance::populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo) {
-		createInfo = {};
-		createInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
-		createInfo.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
-		createInfo.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
-		createInfo.pfnUserCallback = debugCallback;
-		createInfo.pUserData = nullptr;  // Optional
 	}
 
 	void Instance::setupDebugMessenger()
@@ -145,19 +144,13 @@ namespace VulkanPG {
 		}
 	}
 
-	std::vector<const char*> Instance::getRequiredExtensions()
-	{
-		uint32_t glfwExtensionCount = 0;
-		const char** glfwExtensions;
-		glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
-
-		std::vector<const char*> extensions(glfwExtensions, glfwExtensions + glfwExtensionCount);
-
-		if (enableValidationLayers) {
-			extensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
-		}
-
-		return extensions;
+	void Instance::populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo) {
+		createInfo = {};
+		createInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
+		createInfo.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
+		createInfo.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
+		createInfo.pfnUserCallback = debugCallback;
+		createInfo.pUserData = nullptr;  // Optional
 	}
 
 	bool Instance::checkValidationLayerSupport()
@@ -188,4 +181,87 @@ namespace VulkanPG {
 
 		return true;
 	}
+
+	std::vector<const char*> Instance::getRequiredExtensions()
+	{
+		uint32_t glfwExtensionCount = 0;
+		const char** glfwExtensions;
+		glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
+
+		std::vector<const char*> extensions(glfwExtensions, glfwExtensions + glfwExtensionCount);
+
+		if (enableValidationLayers) {
+			extensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
+		}
+
+		return extensions;
+	}
+
+	void Instance::pickPhysicalDevice()
+	{
+		VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
+		uint32_t deviceCount = 0;
+		vkEnumeratePhysicalDevices(instance, &deviceCount, nullptr);
+		VPL_CORE_INFO("Device Count {0}", deviceCount);
+
+		if (deviceCount == 0) {
+			VPL_CORE_ERROR("failed to find GPUs with Vulkan support!");
+			throw std::runtime_error("failed to find GPUs with Vulkan support!");
+		}
+
+		std::vector<VkPhysicalDevice> devices(deviceCount);
+		vkEnumeratePhysicalDevices(instance, &deviceCount, devices.data());
+
+		for (const auto& device : devices) {
+			if (isDeviceSuitable(device)) {
+				physicalDevice = device;
+				break;
+			}
+		}
+
+		if (physicalDevice == VK_NULL_HANDLE) {
+			VPL_CORE_ERROR("failed to find a suitable GPU!");
+			throw std::runtime_error("failed to find a suitable GPU!");
+		}
+	}
+
+	bool Instance::isDeviceSuitable(VkPhysicalDevice device) {
+		QueueFamilyIndices indices = findQueueFamilies(device);
+
+		VkPhysicalDeviceProperties deviceProperties;
+		vkGetPhysicalDeviceProperties(device, &deviceProperties);
+
+		VkPhysicalDeviceFeatures deviceFeatures;
+		vkGetPhysicalDeviceFeatures(device, &deviceFeatures);
+
+		return deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU &&
+			deviceFeatures.geometryShader && indices.isComplete();
+	}
+
+	QueueFamilyIndices Instance::findQueueFamilies(VkPhysicalDevice device)
+	{
+		QueueFamilyIndices indices;
+		// Assign index to queue families that could be found
+		uint32_t queueFamilyCount = 0;
+		vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, nullptr);
+
+		std::vector<VkQueueFamilyProperties> queueFamilies(queueFamilyCount);
+		vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, queueFamilies.data());
+
+		int i = 0;
+		for (const auto& queueFamily : queueFamilies) {
+			if (queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT) {
+				indices.graphicsFamily = i;
+			}
+			if (indices.isComplete()) {
+				break;
+			}
+			i++;
+		}
+
+
+
+		return indices;
+	}
+
 }
