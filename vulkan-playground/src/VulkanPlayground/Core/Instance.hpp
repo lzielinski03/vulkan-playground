@@ -24,6 +24,11 @@ namespace VulkanPG {
 		VkInstance instance;
 		VkDebugUtilsMessengerEXT debugMessenger;
 
+		VkDevice device;
+		VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
+
+		VkQueue graphicsQueue;
+
 		void createInstance();
 		void setupDebugMessenger();
 		void populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo);
@@ -34,5 +39,7 @@ namespace VulkanPG {
 		bool Instance::isDeviceSuitable(VkPhysicalDevice device);
 
 		QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
+
+		void createLogicalDevice();
 	};
 }

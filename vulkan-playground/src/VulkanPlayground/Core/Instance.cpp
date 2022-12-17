@@ -9,8 +9,6 @@
 #include <glm/vec4.hpp>
 #include <glm/mat4x4.hpp>
 
-
-
 namespace VulkanPG {
 
 #ifdef NDEBUG
@@ -29,7 +27,22 @@ namespace VulkanPG {
 		const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
 		void* pUserData) {
 
-		VPL_CORE_ERROR("validation layer: {0}", pCallbackData->pMessage);
+		//if (messageSeverity == VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT)
+		//{
+			//VPL_CORE_INFO("ValidationLayer VERBOSE: {0}", pCallbackData->pMessage);
+		//}
+		if (messageSeverity == VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT)
+		{
+			VPL_CORE_INFO("ValidationLayer INFO: {0}", pCallbackData->pMessage);
+		}
+		if (messageSeverity == VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT)
+		{
+			VPL_CORE_WARN("ValidationLayer WARN: {0}", pCallbackData->pMessage);
+		}
+		if (messageSeverity == VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT)
+		{
+			VPL_CORE_ERROR("ValidationLayer ERROR: {0}", pCallbackData->pMessage);
+		}
 
 		return VK_FALSE;
 	}
@@ -66,6 +79,8 @@ namespace VulkanPG {
 	{
 		VPL_CORE_TRACE("Instance destructor");
 
+		vkDestroyDevice(device, nullptr);
+
 		if (enableValidationLayers) {
 			VPL_CORE_TRACE("Instance destroyDebugUtilsMessengerEXT {0}", debugMessenger != nullptr);
 
@@ -81,6 +96,7 @@ namespace VulkanPG {
 		createInstance();
 		setupDebugMessenger();
 		pickPhysicalDevice();
+		createLogicalDevice();
 	}
 
 	void Instance::createInstance()
@@ -136,7 +152,6 @@ namespace VulkanPG {
 
 		VkDebugUtilsMessengerCreateInfoEXT createInfo{};
 		populateDebugMessengerCreateInfo(createInfo);
-		VPL_CORE_TRACE("debugMessenger: {0}", debugMessenger == nullptr);
 
 		if (createDebugUtilsMessengerEXT(instance, &createInfo, nullptr, &debugMessenger) != VK_SUCCESS) {
 			VPL_CORE_ERROR("failed to set up debug messenger!");
@@ -199,10 +214,8 @@ namespace VulkanPG {
 
 	void Instance::pickPhysicalDevice()
 	{
-		VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
 		uint32_t deviceCount = 0;
 		vkEnumeratePhysicalDevices(instance, &deviceCount, nullptr);
-		VPL_CORE_INFO("Device Count {0}", deviceCount);
 
 		if (deviceCount == 0) {
 			VPL_CORE_ERROR("failed to find GPUs with Vulkan support!");
@@ -223,6 +236,7 @@ namespace VulkanPG {
 			VPL_CORE_ERROR("failed to find a suitable GPU!");
 			throw std::runtime_error("failed to find a suitable GPU!");
 		}
+		
 	}
 
 	bool Instance::isDeviceSuitable(VkPhysicalDevice device) {
@@ -241,16 +255,17 @@ namespace VulkanPG {
 	QueueFamilyIndices Instance::findQueueFamilies(VkPhysicalDevice device)
 	{
 		QueueFamilyIndices indices;
-		// Assign index to queue families that could be found
+
 		uint32_t queueFamilyCount = 0;
 		vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, nullptr);
+		VPL_CORE_TRACE("queueFamilyCount: {0}", queueFamilyCount);
 
 		std::vector<VkQueueFamilyProperties> queueFamilies(queueFamilyCount);
 		vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, queueFamilies.data());
 
 		int i = 0;
 		for (const auto& queueFamily : queueFamilies) {
-			if (queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT) {
+			if (queueFamily.queueCount > 0 && queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT) {
 				indices.graphicsFamily = i;
 			}
 			if (indices.isComplete()) {
@@ -259,9 +274,46 @@ namespace VulkanPG {
 			i++;
 		}
 
-
-
 		return indices;
+	}
+
+	void Instance::createLogicalDevice()
+	{
+		QueueFamilyIndices indices = findQueueFamilies(physicalDevice);
+		VPL_CORE_TRACE("indices: {0}", indices.graphicsFamily.value());
+		VkDeviceQueueCreateInfo queueCreateInfo{};
+		queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+		queueCreateInfo.queueFamilyIndex = indices.graphicsFamily.value();
+		queueCreateInfo.queueCount = 1;
+
+		float queuePriority = 1.0f;
+		queueCreateInfo.pQueuePriorities = &queuePriority;
+
+		VkPhysicalDeviceFeatures deviceFeatures{};
+
+		VkDeviceCreateInfo createInfo{};
+		createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+		createInfo.pQueueCreateInfos = &queueCreateInfo;
+		createInfo.queueCreateInfoCount = 1;
+
+		createInfo.pEnabledFeatures = &deviceFeatures;
+		createInfo.enabledExtensionCount = 0;
+
+		// might not really be necessary anymore because device specific validation layers
+		// have been deprecated
+		if (enableValidationLayers) {
+			createInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
+			createInfo.ppEnabledLayerNames = validationLayers.data();
+		}
+		else {
+			createInfo.enabledLayerCount = 0;
+		}
+
+		if (vkCreateDevice(physicalDevice, &createInfo, nullptr, &device) != VK_SUCCESS) {
+			VPL_CORE_ERROR("failed to create logical device!");
+			throw std::runtime_error("failed to create logical device!");
+		}
+		vkGetDeviceQueue(device, indices.graphicsFamily.value(), 0, &graphicsQueue);
 	}
 
 }
