@@ -13,8 +13,11 @@ namespace VulkanPG {
 		m_Window->SetEventCallback(BIND_EVENT_FN(Application::OnEvent));
 
 		//createInstance();
-		//instance = Instance();
-		instance.initVulkan();
+		//instance = Device();
+		device.initVulkan(*m_Window);
+		
+		VPL_CORE_TRACE("Device initVulkan window Height: {0}", m_Window.get()->GetHeight());
+
 	}
 
 	Application::~Application()

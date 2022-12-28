@@ -3,23 +3,25 @@
 #include <vulkan/vulkan_core.h>
 #include <vector>
 #include <optional>
+#include "VulkanPlayground/Window.hpp"
 
 namespace VulkanPG {
 
 	struct QueueFamilyIndices {
 		std::optional<uint32_t> graphicsFamily;
+		std::optional<uint32_t> presentFamily;
 
 		bool isComplete() {
-			return graphicsFamily.has_value();
+			return graphicsFamily.has_value() && presentFamily.has_value();
 		}
 	};
 
-	class VPL_API Instance {
+	class VPL_API Device {
 	public:
-		Instance();
-		~Instance();
+		Device();
+		~Device();
 
-		void initVulkan();
+		void initVulkan(Window& window);
 	private:
 		VkInstance instance;
 		VkDebugUtilsMessengerEXT debugMessenger;
@@ -29,6 +31,10 @@ namespace VulkanPG {
 
 		VkQueue graphicsQueue;
 
+		VkSurfaceKHR surface;
+
+		VkQueue presentQueue;
+
 		void createInstance();
 		void setupDebugMessenger();
 		void populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo);
@@ -36,10 +42,12 @@ namespace VulkanPG {
 		std::vector<const char*> getRequiredExtensions();
 
 		void pickPhysicalDevice();
-		bool Instance::isDeviceSuitable(VkPhysicalDevice device);
+		bool Device::isDeviceSuitable(VkPhysicalDevice device);
 
 		QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
 
 		void createLogicalDevice();
+
+		void createSurface(Window& window);
 	};
 }

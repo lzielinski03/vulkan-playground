@@ -40,6 +40,9 @@ namespace VulkanPG {
 		virtual bool IsVSync() const = 0;
 
 		static Window* Create(const WindowProps& props = WindowProps());
+
+		// void* is a bad practice, can be replaced with templates
+		virtual void* GetNativeWindow() const = 0;
 	};
 
 }

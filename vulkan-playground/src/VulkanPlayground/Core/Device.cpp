@@ -1,5 +1,5 @@
 #include "pch.hpp"
-#include "Instance.hpp"
+#include "Device.hpp"
 
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
@@ -69,39 +69,41 @@ namespace VulkanPG {
 		}
 	}
 
-	Instance::Instance()
+	Device::Device()
 	{
-		VPL_CORE_TRACE("Instance constructor");
+		VPL_CORE_TRACE("Device constructor");
 		//initVulkan();
 	}
 
-	Instance::~Instance()
+	Device::~Device()
 	{
-		VPL_CORE_TRACE("Instance destructor");
+		VPL_CORE_TRACE("Device destructor");
 
 		vkDestroyDevice(device, nullptr);
 
 		if (enableValidationLayers) {
-			VPL_CORE_TRACE("Instance destroyDebugUtilsMessengerEXT {0}", debugMessenger != nullptr);
+			VPL_CORE_TRACE("Device destroyDebugUtilsMessengerEXT {0}", debugMessenger != nullptr);
 
 			destroyDebugUtilsMessengerEXT(instance, debugMessenger, nullptr);
 		}
-		VPL_CORE_TRACE("Instance vkDestroyInstance");
-
+		vkDestroySurfaceKHR(instance, surface, nullptr);
+		VPL_CORE_TRACE("Device vkDestroyInstance");
 		vkDestroyInstance(instance, nullptr);
 	}
 
-	void Instance::initVulkan()
+	void Device::initVulkan(Window& window)
 	{
+		VPL_CORE_TRACE("Device initVulkan window Height: {0}", window.GetHeight());
 		createInstance();
 		setupDebugMessenger();
+		createSurface(window);
 		pickPhysicalDevice();
 		createLogicalDevice();
 	}
 
-	void Instance::createInstance()
+	void Device::createInstance()
 	{
-		VPL_CORE_TRACE("Instance initVulkan");
+		VPL_CORE_TRACE("Device initVulkan");
 
 		if (enableValidationLayers && !checkValidationLayerSupport())
 		{
@@ -146,7 +148,7 @@ namespace VulkanPG {
 		}
 	}
 
-	void Instance::setupDebugMessenger()
+	void Device::setupDebugMessenger()
 	{
 		if (!enableValidationLayers) return;
 
@@ -159,7 +161,7 @@ namespace VulkanPG {
 		}
 	}
 
-	void Instance::populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo) {
+	void Device::populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo) {
 		createInfo = {};
 		createInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
 		createInfo.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
@@ -168,7 +170,7 @@ namespace VulkanPG {
 		createInfo.pUserData = nullptr;  // Optional
 	}
 
-	bool Instance::checkValidationLayerSupport()
+	bool Device::checkValidationLayerSupport()
 	{
 		uint32_t layerCount;
 		vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
@@ -197,7 +199,7 @@ namespace VulkanPG {
 		return true;
 	}
 
-	std::vector<const char*> Instance::getRequiredExtensions()
+	std::vector<const char*> Device::getRequiredExtensions()
 	{
 		uint32_t glfwExtensionCount = 0;
 		const char** glfwExtensions;
@@ -212,7 +214,7 @@ namespace VulkanPG {
 		return extensions;
 	}
 
-	void Instance::pickPhysicalDevice()
+	void Device::pickPhysicalDevice()
 	{
 		uint32_t deviceCount = 0;
 		vkEnumeratePhysicalDevices(instance, &deviceCount, nullptr);
@@ -239,7 +241,7 @@ namespace VulkanPG {
 		
 	}
 
-	bool Instance::isDeviceSuitable(VkPhysicalDevice device) {
+	bool Device::isDeviceSuitable(VkPhysicalDevice device) {
 		QueueFamilyIndices indices = findQueueFamilies(device);
 
 		VkPhysicalDeviceProperties deviceProperties;
@@ -252,7 +254,7 @@ namespace VulkanPG {
 			deviceFeatures.geometryShader && indices.isComplete();
 	}
 
-	QueueFamilyIndices Instance::findQueueFamilies(VkPhysicalDevice device)
+	QueueFamilyIndices Device::findQueueFamilies(VkPhysicalDevice device)
 	{
 		QueueFamilyIndices indices;
 
@@ -265,6 +267,11 @@ namespace VulkanPG {
 
 		int i = 0;
 		for (const auto& queueFamily : queueFamilies) {
+			VkBool32 presentSupport = false;
+			vkGetPhysicalDeviceSurfaceSupportKHR(device, i, surface, &presentSupport);
+			if (presentSupport) {
+				indices.presentFamily = i;
+			}
 			if (queueFamily.queueCount > 0 && queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT) {
 				indices.graphicsFamily = i;
 			}
@@ -277,25 +284,30 @@ namespace VulkanPG {
 		return indices;
 	}
 
-	void Instance::createLogicalDevice()
+	void Device::createLogicalDevice()
 	{
 		QueueFamilyIndices indices = findQueueFamilies(physicalDevice);
 		VPL_CORE_TRACE("indices: {0}", indices.graphicsFamily.value());
-		VkDeviceQueueCreateInfo queueCreateInfo{};
-		queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-		queueCreateInfo.queueFamilyIndex = indices.graphicsFamily.value();
-		queueCreateInfo.queueCount = 1;
+
+		std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
+		std::set<uint32_t> uniqueQueueFamilies = { indices.graphicsFamily.value(), indices.presentFamily.value() };
 
 		float queuePriority = 1.0f;
-		queueCreateInfo.pQueuePriorities = &queuePriority;
+		for (uint32_t queueFamily : uniqueQueueFamilies) {
+			VkDeviceQueueCreateInfo queueCreateInfo{};
+			queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+			queueCreateInfo.queueFamilyIndex = queueFamily;
+			queueCreateInfo.queueCount = 1;
+			queueCreateInfo.pQueuePriorities = &queuePriority;
+			queueCreateInfos.push_back(queueCreateInfo);
+		}
 
 		VkPhysicalDeviceFeatures deviceFeatures{};
 
 		VkDeviceCreateInfo createInfo{};
 		createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-		createInfo.pQueueCreateInfos = &queueCreateInfo;
-		createInfo.queueCreateInfoCount = 1;
-
+		createInfo.queueCreateInfoCount = static_cast<uint32_t>(queueCreateInfos.size());;
+		createInfo.pQueueCreateInfos = queueCreateInfos.data();
 		createInfo.pEnabledFeatures = &deviceFeatures;
 		createInfo.enabledExtensionCount = 0;
 
@@ -314,6 +326,16 @@ namespace VulkanPG {
 			throw std::runtime_error("failed to create logical device!");
 		}
 		vkGetDeviceQueue(device, indices.graphicsFamily.value(), 0, &graphicsQueue);
+		vkGetDeviceQueue(device, indices.presentFamily.value(), 0, &presentQueue);
+	}
+
+	void Device::createSurface(Window& window)
+	{
+		auto w = static_cast<GLFWwindow*>(window.GetNativeWindow());
+		if (glfwCreateWindowSurface(instance, w, nullptr, &surface) != VK_SUCCESS) {
+			VPL_CORE_ERROR("failed to create window surface!");
+			throw std::runtime_error("failed to create window surface!");
+		}
 	}
 
 }

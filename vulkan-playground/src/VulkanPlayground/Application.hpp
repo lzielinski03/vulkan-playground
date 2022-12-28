@@ -5,7 +5,7 @@
 #include "VulkanPlayground/Events/ApplicationEvent.hpp"
 
 #include "Window.hpp"
-#include "Core/Instance.hpp"
+#include "Core/Device.hpp"
 
 namespace VulkanPG {
 
@@ -21,7 +21,7 @@ namespace VulkanPG {
 		std::unique_ptr<Window> m_Window;
 		bool m_Running = true;
 
-		Instance instance;
+		Device device;
 	};
 
 	// to be deffined in a client
