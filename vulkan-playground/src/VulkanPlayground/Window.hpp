@@ -42,7 +42,7 @@ namespace VulkanPG {
 		static Window* Create(const WindowProps& props = WindowProps());
 
 		// void* is a bad practice, can be replaced with templates
-		virtual void* GetNativeWindow() const = 0;
+		inline virtual void* GetNativeWindow() const = 0;
 	};
 
 }

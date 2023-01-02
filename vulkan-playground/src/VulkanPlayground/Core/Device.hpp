@@ -16,12 +16,18 @@ namespace VulkanPG {
 		}
 	};
 
+	struct SwapChainSupportDetails {
+		VkSurfaceCapabilitiesKHR capabilities;
+		std::vector<VkSurfaceFormatKHR> formats;
+		std::vector<VkPresentModeKHR> presentModes;
+	};
+
 	class VPL_API Device {
 	public:
 		Device();
 		~Device();
 
-		void initVulkan(Window& window);
+		void initVulkan();
 	private:
 		VkInstance instance;
 		VkDebugUtilsMessengerEXT debugMessenger;
@@ -40,6 +46,7 @@ namespace VulkanPG {
 		void populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo);
 		bool checkValidationLayerSupport();
 		std::vector<const char*> getRequiredExtensions();
+		void createSwapChain();
 
 		void pickPhysicalDevice();
 		bool Device::isDeviceSuitable(VkPhysicalDevice device);
@@ -48,6 +55,17 @@ namespace VulkanPG {
 
 		void createLogicalDevice();
 
-		void createSurface(Window& window);
+		void createSurface();
+		
+		bool checkDeviceExtensionSupport(VkPhysicalDevice device);
+		SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device);
+		VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
+		VkPresentModeKHR chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes);
+		VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
+
+		VkSwapchainKHR swapChain;
+		std::vector<VkImage> swapChainImages;
+		VkFormat swapChainImageFormat;
+		VkExtent2D swapChainExtent;
 	};
 }

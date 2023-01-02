@@ -6,15 +6,20 @@ namespace VulkanPG {
 
 #define BIND_EVENT_FN(x) std::bind(&x, this, std::placeholders::_1)
 
+	Application* Application::s_Instance = nullptr;
+
 	Application::Application()
 	{
 		VPL_CORE_TRACE("Application constructor");
+		VPL_CORE_ASSERT(!s_Instance, "Application already exists!");
+		s_Instance = this;
 		m_Window = std::unique_ptr<Window>(Window::Create());
 		m_Window->SetEventCallback(BIND_EVENT_FN(Application::OnEvent));
 
 		//createInstance();
 		//instance = Device();
-		device.initVulkan(*m_Window);
+		//device.initVulkan(*m_Window);
+		device.initVulkan();
 		
 		VPL_CORE_TRACE("Device initVulkan window Height: {0}", m_Window.get()->GetHeight());
 

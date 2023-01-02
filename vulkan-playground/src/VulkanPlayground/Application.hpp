@@ -16,12 +16,17 @@ namespace VulkanPG {
 
 		void Run();
 		void OnEvent(Event& e);
+
+		static Application& Get() { return *s_Instance; }
+
+		Window& GetWindow() { return *m_Window; }
 	private:
 		bool OnWindowClose(WindowCloseEvent& e);
 		std::unique_ptr<Window> m_Window;
 		bool m_Running = true;
 
 		Device device;
+		static Application* s_Instance;
 	};
 
 	// to be deffined in a client
